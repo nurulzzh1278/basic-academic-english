@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Academic English Word Challenge</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#e0f2fe,#ede9fe);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px;color:#263238}
+.game-container{width:100%;max-width:750px;background:white;border-radius:24px;padding:30px;box-shadow:0 15px 40px rgba(0,0,0,.12)}
+.header{text-align:center;margin-bottom:25px}.header .icon{font-size:55px;margin-bottom:10px}.header h1{color:#4f46e5;font-size:30px;margin-bottom:8px}.header p{color:#64748b;font-size:15px}
+.screen{display:none}.screen.active{display:block}.intro{text-align:center}.intro h2{color:#334155;margin-bottom:15px}.intro p{line-height:1.7;color:#64748b;margin-bottom:20px}
+.rules{background:#f8fafc;border-radius:15px;padding:18px;text-align:left;margin-bottom:25px}.rules p{margin:8px 0;color:#475569}
+button{border:none;cursor:pointer;font-family:inherit;transition:.2s}.main-btn{background:#4f46e5;color:white;padding:14px 30px;border-radius:12px;font-size:16px;font-weight:bold}.main-btn:hover{background:#4338ca;transform:translateY(-2px)}
+.game-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:10px}.badge{background:#eef2ff;color:#4f46e5;padding:8px 13px;border-radius:20px;font-size:14px;font-weight:bold}.score{background:#fef3c7;color:#92400e;padding:8px 13px;border-radius:20px;font-weight:bold}.hearts{font-size:18px}
+.progress-container{width:100%;height:9px;background:#e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:25px}.progress-bar{height:100%;width:0%;background:#6366f1;transition:.4s}
+.category{display:inline-block;background:#dcfce7;color:#166534;padding:6px 12px;border-radius:15px;font-size:13px;font-weight:bold;margin-bottom:15px}.question{font-size:22px;line-height:1.5;color:#1e293b;margin-bottom:20px}
+.options{display:grid;gap:12px}.option{width:100%;text-align:left;background:#f8fafc;border:2px solid #e2e8f0;padding:14px 16px;border-radius:12px;font-size:15px;color:#334155}.option:hover{background:#eef2ff;border-color:#818cf8}.option.correct{background:#dcfce7;border-color:#22c55e;color:#166534}.option.wrong{background:#fee2e2;border-color:#ef4444;color:#991b1b}.option.disabled{pointer-events:none}
+.feedback{display:none;margin-top:20px;padding:16px;border-radius:12px;line-height:1.6}.feedback.show{display:block}.feedback.correct-feedback{background:#f0fdf4;border-left:5px solid #22c55e;color:#166534}.feedback.wrong-feedback{background:#fff7ed;border-left:5px solid #f97316;color:#9a3412}
+.next-container{text-align:right;margin-top:20px}.result{text-align:center}.result-icon{font-size:70px;margin-bottom:15px}.result h2{color:#4f46e5;margin-bottom:10px}.final-score{font-size:45px;font-weight:bold;color:#4f46e5;margin:15px 0}.result-message{color:#64748b;line-height:1.7;margin-bottom:25px}
+@media(max-width:600px){body{padding:10px}.game-container{padding:20px;border-radius:18px}.header h1{font-size:24px}.question{font-size:19px}.game-top{flex-wrap:wrap}}
+</style>
+</head>
+<body>
+<div class="game-container">
+<div class="header"><div class="icon">🎓</div><h1>Academic English Word Challenge</h1><p>Learn Basic Academic English through a fun quiz!</p></div>
+<div id="startScreen" class="screen active"><div class="intro"><h2>Welcome, Academic Explorer! 📚</h2><p>Test your knowledge of Basic Academic English through 10 fun challenges.</p><div class="rules"><p>📝 <strong>10</strong> questions</p><p>⭐ <strong>10 points</strong> for every correct answer</p><p>❤️ You have <strong>3 lives</strong></p><p>💡 Each question includes a learning explanation</p></div><button class="main-btn" onclick="startGame()">🚀 Start Game</button></div></div>
+<div id="gameScreen" class="screen">
+<div class="game-top"><div class="badge" id="questionNumber">Question 1/10</div><div class="score">⭐ Score: <span id="score">0</span></div><div class="hearts" id="hearts">❤️❤️❤️</div></div>
+<div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+<div id="category" class="category">Formal Language</div><h2 id="question" class="question"></h2><div id="options" class="options"></div>
+<div id="feedback" class="feedback"></div><div class="next-container"><button id="nextButton" class="main-btn" onclick="nextQuestion()" style="display:none;">Next Question →</button></div>
+</div>
+<div id="resultScreen" class="screen"><div class="result"><div class="result-icon" id="resultIcon">🏆</div><h2>Game Completed!</h2><div class="final-score"><span id="finalScore">0</span>/100</div><p id="resultMessage" class="result-message"></p><button class="main-btn" onclick="restartGame()">🔄 Play Again</button></div></div>
+</div>
+<script>
+const questions=[
+{category:"Formal Language",question:"Which word is more appropriate for formal academic writing instead of “gonna”?",options:["Going to","Wanna","Gotta","Kinda"],answer:0,explanation:"“Going to” is the formal form of the informal expression “gonna”."},
+{category:"Formal Language",question:"Which sentence is more appropriate for academic writing?",options:["I think this is a really good idea.","I believe this is a beneficial idea.","This idea is super cool.","I totally like this idea."],answer:1,explanation:"“I believe this is a beneficial idea” uses more formal and academic vocabulary."},
+{category:"Formal Vocabulary",question:"In academic writing, which word is more formal than “kids”?",options:["Guys","Children","Buddies","Teens"],answer:1,explanation:"“Children” is more formal and appropriate for academic contexts than “kids”."},
+{category:"Academic Reading",question:"What does “main idea” mean in an academic text?",options:["A small detail","The writer's name","The central idea of the text","A difficult word"],answer:2,explanation:"The main idea is the central or most important idea discussed in a text."},
+{category:"Academic Reading",question:"Read: “The research shows that students benefit from reading regularly.” What is the main topic?",options:["Students' hobbies","Benefits of reading for students","Types of research","School activities"],answer:1,explanation:"The sentence focuses on how regular reading benefits students."},
+{category:"Academic Vocabulary",question:"Which word is more academic and formal than “help”?",options:["Assist","Fix","Hang out","Give a hand"],answer:0,explanation:"“Assist” is a formal synonym of “help” and is frequently used in academic writing."},
+{category:"Giving Opinions",question:"Which expression is appropriate for giving an opinion in an academic discussion?",options:["In my view, ...","No way!","I dunno...","Whatever!"],answer:0,explanation:"“In my view” is a polite and formal expression for introducing an opinion."},
+{category:"Arguments",question:"A strong academic argument should be supported by...",options:["Rumors","Evidence","Personal attacks","Random guesses"],answer:1,explanation:"Academic arguments should be supported by evidence, examples, data, or reliable sources."},
+{category:"Formal Writing",question:"Which sentence is most suitable for an academic essay?",options:["Social media is super awesome.","I kinda think social media is cool.","The results indicate that social media affects communication.","Social media is, like, everywhere."],answer:2,explanation:"The third sentence uses formal vocabulary and an objective academic style."},
+{category:"Mixed Challenge",question:"Complete the sentence: “_____ the evidence, online learning can improve accessibility.”",options:["Based on","Kinda on","Wanna see","Like"],answer:0,explanation:"“Based on the evidence” is a formal expression commonly used when presenting an argument."}
+];
+let currentQuestion=0,score=0,lives=3,answered=false;
+function startGame(){currentQuestion=0;score=0;lives=3;document.getElementById("startScreen").classList.remove("active");document.getElementById("resultScreen").classList.remove("active");document.getElementById("gameScreen").classList.add("active");loadQuestion();}
+function loadQuestion(){answered=false;const q=questions[currentQuestion];document.getElementById("questionNumber").textContent=`Question ${currentQuestion+1}/${questions.length}`;document.getElementById("score").textContent=score;document.getElementById("category").textContent=q.category;document.getElementById("question").textContent=q.question;document.getElementById("feedback").className="feedback";document.getElementById("feedback").innerHTML="";document.getElementById("nextButton").style.display="none";updateHearts();updateProgress();const c=document.getElementById("options");c.innerHTML="";q.options.forEach((option,index)=>{const b=document.createElement("button");b.className="option";b.textContent=`${String.fromCharCode(65+index)}. ${option}`;b.onclick=()=>checkAnswer(index,b);c.appendChild(b);});}
+function checkAnswer(selected,button){if(answered)return;answered=true;const q=questions[currentQuestion],all=document.querySelectorAll(".option");all.forEach(o=>o.classList.add("disabled"));if(selected===q.answer){button.classList.add("correct");score+=10;showFeedback(true,"✅ Correct!",q.explanation)}else{button.classList.add("wrong");all[q.answer].classList.add("correct");lives--;showFeedback(false,"❌ Not quite!",q.explanation)}document.getElementById("score").textContent=score;updateHearts();document.getElementById("nextButton").style.display="inline-block";}
+function showFeedback(correct,title,explanation){const f=document.getElementById("feedback");f.className=correct?"feedback show correct-feedback":"feedback show wrong-feedback";f.innerHTML=`<strong>${title}</strong><br>${explanation}`;}
+function nextQuestion(){currentQuestion++;if(currentQuestion>=questions.length||lives<=0)showResult();else loadQuestion();}
+function updateHearts(){let s="";for(let i=0;i<lives;i++)s+="❤️";for(let i=lives;i<3;i++)s+="🖤";document.getElementById("hearts").textContent=s;}
+function updateProgress(){document.getElementById("progressBar").style.width=((currentQuestion)/questions.length*100)+"%";}
+function showResult(){document.getElementById("gameScreen").classList.remove("active");document.getElementById("resultScreen").classList.add("active");document.getElementById("finalScore").textContent=score;const m=document.getElementById("resultMessage"),i=document.getElementById("resultIcon");if(score>=90){i.textContent="🏆";m.textContent="Excellent! Your understanding of Basic Academic English is very strong."}else if(score>=70){i.textContent="🌟";m.textContent="Great job! You have a good understanding of Basic Academic English."}else if(score>=50){i.textContent="📚";m.textContent="Good effort! Keep practicing formal language, reading, and academic arguments."}else{i.textContent="💪";m.textContent="Keep learning! Review the explanations and try the game again."}}
+function restartGame(){document.getElementById("resultScreen").classList.remove("active");document.getElementById("gameScreen").classList.add("active");currentQuestion=0;score=0;lives=3;loadQuestion();}
+</script>
+</body>
+</html>
